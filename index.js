@@ -114,6 +114,7 @@ const getNewLearnData = (
   currentRowIndex = 0
 ) => {
   const poemBlocks = BaseBlocks[poem.id];
+  if (currentBlockIndex > poemBlocks.length - 1) return null;
   const rows = poemBlocks[currentBlockIndex];
   const blocksCount = poemBlocks.length - 1;
   const rowsCount = Math.ceil(rows.length / ROWS_COUNT);
@@ -209,6 +210,10 @@ atLearn.any((ctx) => {
           currentBlock.index + 1,
           0
         );
+        if (!nextLearnData) {
+          ctx.leave();
+          return yandex_dialogs_sdk_1.Reply.text("Переход в меню");
+        }
         saveLearnData(ctx.session, nextLearnData);
         return yandex_dialogs_sdk_1.Reply.text(getCurrentText(nextLearnData));
       }
@@ -222,6 +227,10 @@ atLearn.any((ctx) => {
           currentBlock.index,
           currentRow.index + 1
         );
+        if (!nextLearnData) {
+          ctx.leave();
+          return yandex_dialogs_sdk_1.Reply.text("Переход в меню");
+        }
         saveLearnData(ctx.session, nextLearnData);
         return yandex_dialogs_sdk_1.Reply.text(getCurrentText(nextLearnData));
       } else {
@@ -508,6 +517,10 @@ atSelectList.any((ctx) => {
       if (selectedPoem) {
         ctx.enter(LEARN_SCENE);
         const learnData = getNewLearnData(selectedPoem, "row");
+        if (!learnData) {
+          ctx.leave();
+          return yandex_dialogs_sdk_1.Reply.text("Переход в меню");
+        }
         const text = getCurrentText(learnData);
         saveLearnData(ctx.session, learnData);
         return yandex_dialogs_sdk_1.Reply.text(
